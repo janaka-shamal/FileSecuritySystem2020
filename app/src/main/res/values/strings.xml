@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FileSecuritySystem</string>
+    <string name="access">Access</string>
 </resources>
