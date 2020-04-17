@@ -5,7 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Home">
-
+    <Button
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/folder"
+        android:text="Folder"
+        android:enabled="true"
+        android:layout_above="@id/layout_group"
+        ></Button>
     <LinearLayout
         android:id="@+id/layout_group"
         android:layout_width="match_parent"
@@ -18,6 +26,30 @@
             android:layout_height="wrap_content"
             android:id="@+id/img"
             android:text="Image"
+            android:enabled="true"
+            ></Button>
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/video"
+            android:text="Video"
+            android:enabled="true"
+            ></Button>
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/audio"
+            android:text="Audio"
+            android:enabled="true"
+            ></Button>
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt"
+            android:text="Text"
             android:enabled="true"
             ></Button>
 
