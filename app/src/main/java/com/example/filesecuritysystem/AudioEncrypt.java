@@ -34,7 +34,7 @@ import javax.crypto.NoSuchPaddingException;
 
 public class AudioEncrypt extends AppCompatActivity {
     private static final String FILE_NAME_DEC ="jnk.mp3" ;
-    Button btn_enc,btn_dec,btn_pick;
+    Button btn_enc,btn_dec;
     InputStream inputStream;
 
     File myDir;
@@ -47,7 +47,6 @@ public class AudioEncrypt extends AppCompatActivity {
         setContentView(R.layout.activity_audio_encrypt);
         btn_enc=(Button)findViewById(R.id.btn_encrypt);
         btn_dec=(Button)findViewById(R.id.btn_decrypt);
-        btn_pick=(Button)findViewById(R.id.btn_pick);
         myDir=new File(Environment.getExternalStorageDirectory().toString());
         Dexter.withActivity(this)
                 .withPermissions(new String[]{
@@ -58,7 +57,6 @@ public class AudioEncrypt extends AppCompatActivity {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         btn_dec.setEnabled(true);
-                        btn_enc.setEnabled(true);
                         btn_enc.setEnabled(true);
                     }
 
@@ -85,6 +83,7 @@ public class AudioEncrypt extends AppCompatActivity {
                     try {
                         Encryptor.encryptToFile(my_key, my_spec_key, is, new FileOutputStream(outputFileEnc));
                         Toast.makeText(AudioEncrypt.this, "Ecrypted!!", Toast.LENGTH_SHORT).show();
+                        btn_dec.setEnabled(true);
                     } catch (NoSuchPaddingException e) {
                         e.printStackTrace();
                     } catch (NoSuchAlgorithmException e) {
@@ -100,7 +99,7 @@ public class AudioEncrypt extends AppCompatActivity {
                     Toast.makeText(AudioEncrypt.this, "Select an Audio to Encrypt!!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("audio/*");
-
+                    btn_dec.setEnabled(false);
                     startActivityForResult(Intent.createChooser(intent,"Pick an Audio"),1);
 
                 }

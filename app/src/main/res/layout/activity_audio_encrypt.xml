@@ -15,13 +15,6 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_pick"
-            android:text="Select Audio"
-            ></Button>
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
             android:id="@+id/btn_encrypt"
             android:text="Encrypt"
             android:enabled="false"

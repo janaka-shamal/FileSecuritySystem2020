@@ -97,6 +97,7 @@ public class ImageEncrypt extends AppCompatActivity {
                 try {
                     Encryptor.encryptToFile(my_key,my_spec_key,is,new FileOutputStream(outputFileEnc));
                     Toast.makeText(ImageEncrypt.this,"Ecrypted!!",Toast.LENGTH_SHORT).show();
+                    btn_dec.setEnabled(true);
                 } catch (NoSuchPaddingException e) {
                     e.printStackTrace();
                 } catch (NoSuchAlgorithmException e) {
@@ -114,6 +115,7 @@ public class ImageEncrypt extends AppCompatActivity {
 
                     startActivityForResult(Intent.createChooser(intent,"Pick an Image"),1);
                     Toast.makeText(ImageEncrypt.this,"Select an Image to Encrypt!",Toast.LENGTH_SHORT).show();
+                    btn_dec.setEnabled(false);
                 }
 
             }

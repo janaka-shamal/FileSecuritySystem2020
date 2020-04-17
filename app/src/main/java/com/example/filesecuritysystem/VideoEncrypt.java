@@ -34,7 +34,7 @@ import javax.crypto.NoSuchPaddingException;
 
 public class VideoEncrypt extends AppCompatActivity {
     private static final String FILE_NAME_DEC ="jnk.mp4" ;
-    Button btn_enc,btn_dec,btn_pick;
+    Button btn_enc,btn_dec;
     InputStream inputStream;
 
     File myDir;
@@ -47,7 +47,6 @@ public class VideoEncrypt extends AppCompatActivity {
         setContentView(R.layout.activity_video_encrypt);
         btn_enc=(Button)findViewById(R.id.btn_encrypt);
         btn_dec=(Button)findViewById(R.id.btn_decrypt);
-        btn_pick=(Button)findViewById(R.id.btn_pick);
         myDir=new File(Environment.getExternalStorageDirectory().toString());
         Dexter.withActivity(this)
                 .withPermissions(new String[]{
@@ -81,10 +80,11 @@ public class VideoEncrypt extends AppCompatActivity {
 
                 //
                 File outputFileEnc=new File(myDir,FILE_NAME_ENC);
-
+                if(inputStream!=null){
                 try {
                     Encryptor.encryptToFile(my_key,my_spec_key,is,new FileOutputStream(outputFileEnc));
                     Toast.makeText(VideoEncrypt.this,"Ecrypted!!",Toast.LENGTH_SHORT).show();
+                    btn_dec.setEnabled(true);
                 } catch (NoSuchPaddingException e) {
                     e.printStackTrace();
                 } catch (NoSuchAlgorithmException e) {
@@ -95,6 +95,13 @@ public class VideoEncrypt extends AppCompatActivity {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
+                }}else{
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setType("video/*");
+
+                    startActivityForResult(Intent.createChooser(intent,"Pick an Audio"),1);
+                    Toast.makeText(VideoEncrypt.this,"Select a Video to Encrypt",Toast.LENGTH_SHORT).show();
+                    btn_dec.setEnabled(false);
                 }
 
             }
@@ -124,16 +131,6 @@ public class VideoEncrypt extends AppCompatActivity {
             }
         });
 
-        //picking the image file
-        btn_pick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("video/*");
-
-                startActivityForResult(Intent.createChooser(intent,"Pick an Audio"),1);
-            }
-        });
 
 
     }
