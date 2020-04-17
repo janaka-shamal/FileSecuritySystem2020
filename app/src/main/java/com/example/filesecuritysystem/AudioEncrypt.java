@@ -35,7 +35,7 @@ import javax.crypto.NoSuchPaddingException;
 public class AudioEncrypt extends AppCompatActivity {
     private static final String FILE_NAME_DEC ="jnk.mp3" ;
     Button btn_enc,btn_dec;
-    InputStream inputStream;
+    InputStream inputStream,encInputStream;
 
     File myDir;
     private static final String FILE_NAME_ENC="jnk";
@@ -70,20 +70,14 @@ public class AudioEncrypt extends AppCompatActivity {
         btn_enc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //bitmap convertion
-                //Drawable drawable = ContextCompat.getDrawable(MainActivity.this,R.drawable.janaka);
-                //BitmapDrawable bitmapDrawable = (BitmapDrawable)drawable;
-                //Bitmap bitmap1=bitmapDrawable.getBitmap();
-
                 InputStream is= inputStream;
-
-                //
                 File outputFileEnc=new File(myDir,FILE_NAME_ENC);
                 if(inputStream!=null) {
                     try {
                         Encryptor.encryptToFile(my_key, my_spec_key, is, new FileOutputStream(outputFileEnc));
                         Toast.makeText(AudioEncrypt.this, "Ecrypted!!", Toast.LENGTH_SHORT).show();
                         btn_dec.setEnabled(true);
+                        inputStream=null;
                     } catch (NoSuchPaddingException e) {
                         e.printStackTrace();
                     } catch (NoSuchAlgorithmException e) {
@@ -99,24 +93,28 @@ public class AudioEncrypt extends AppCompatActivity {
                     Toast.makeText(AudioEncrypt.this, "Select an Audio to Encrypt!!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("audio/*");
-                    btn_dec.setEnabled(false);
                     startActivityForResult(Intent.createChooser(intent,"Pick an Audio"),1);
 
                 }
 
             }
         });
+
+
         //decryption
         btn_dec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 File outputFileDec = new File(myDir,FILE_NAME_DEC);
-                File encFile=new File(myDir,FILE_NAME_ENC);
+                //File encFile=new File(myDir,FILE_NAME_ENC);
+                if(encInputStream!=null){
                 try{
-                    Encryptor.decryptToFile(my_key,my_spec_key,new FileInputStream(encFile),new FileOutputStream(outputFileDec));
+                    Encryptor.decryptToFile(my_key,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
                     //deletion of the file
                     //outputFileDec.delete();
                     Toast.makeText(AudioEncrypt.this, "Decrypted", Toast.LENGTH_SHORT).show();
+                    btn_enc.setEnabled(true);
+                    encInputStream=null;
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (NoSuchAlgorithmException e) {
@@ -127,6 +125,12 @@ public class AudioEncrypt extends AppCompatActivity {
                     e.printStackTrace();
                 } catch (NoSuchPaddingException e) {
                     e.printStackTrace();
+                }}else{
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setType("application/*");
+                    startActivityForResult(Intent.createChooser(intent,"Pick an Encrypted Audio"),2);
+                    Toast.makeText(AudioEncrypt.this,"Select a Encrypted Audio",Toast.LENGTH_SHORT).show();
+
                 }
             }
         });
@@ -140,6 +144,15 @@ public class AudioEncrypt extends AppCompatActivity {
         if (resultCode == RESULT_OK && requestCode == 1) {
             try {
                 inputStream = getContentResolver().openInputStream(data.getData());
+                btn_dec.setEnabled(false);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        if (resultCode == RESULT_OK && requestCode == 2) {
+            try {
+                encInputStream = getContentResolver().openInputStream(data.getData());
+                btn_enc.setEnabled(false);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

@@ -43,7 +43,7 @@ public class ImageEncrypt extends AppCompatActivity {
     Button btn_enc,btn_dec;
     ImageView imageView;
     Bitmap bitmap;
-
+    InputStream encInputStream;
     File myDir;
     private static final String FILE_NAME_ENC="jnk";
     String my_key="jdwztahttruvphdm";
@@ -98,6 +98,7 @@ public class ImageEncrypt extends AppCompatActivity {
                     Encryptor.encryptToFile(my_key,my_spec_key,is,new FileOutputStream(outputFileEnc));
                     Toast.makeText(ImageEncrypt.this,"Ecrypted!!",Toast.LENGTH_SHORT).show();
                     btn_dec.setEnabled(true);
+                    bitmap=null;
                 } catch (NoSuchPaddingException e) {
                     e.printStackTrace();
                 } catch (NoSuchAlgorithmException e) {
@@ -112,10 +113,9 @@ public class ImageEncrypt extends AppCompatActivity {
                 else{
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("image/*");
-
                     startActivityForResult(Intent.createChooser(intent,"Pick an Image"),1);
                     Toast.makeText(ImageEncrypt.this,"Select an Image to Encrypt!",Toast.LENGTH_SHORT).show();
-                    btn_dec.setEnabled(false);
+
                 }
 
             }
@@ -125,13 +125,16 @@ public class ImageEncrypt extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 File outputFileDec = new File(myDir,FILE_NAME_DEC);
-                File encFile=new File(myDir,FILE_NAME_ENC);
+                //File encFile=new File(myDir,FILE_NAME_ENC);
+                if(encInputStream!=null){
                 try{
-                    Encryptor.decryptToFile(my_key,my_spec_key,new FileInputStream(encFile),new FileOutputStream(outputFileDec));
+                    Encryptor.decryptToFile(my_key,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
                     imageView.setImageURI(Uri.fromFile(outputFileDec));
                     //deletion of the file
-                    outputFileDec.delete();
+                    //outputFileDec.delete();
                     Toast.makeText(ImageEncrypt.this, "Decrypted", Toast.LENGTH_SHORT).show();
+                    btn_enc.setEnabled(true);
+                    encInputStream=null;
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (NoSuchAlgorithmException e) {
@@ -143,6 +146,12 @@ public class ImageEncrypt extends AppCompatActivity {
                 } catch (NoSuchPaddingException e) {
                     e.printStackTrace();
                 }
+            }else{
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setType("application/*");
+                    startActivityForResult(Intent.createChooser(intent,"Pick an Encrypted Image"),2);
+                    Toast.makeText(ImageEncrypt.this,"Select a Encrypted Image",Toast.LENGTH_SHORT).show();
+            }
             }
         });
 
@@ -155,6 +164,16 @@ public class ImageEncrypt extends AppCompatActivity {
             try {
                 InputStream inputStream = getContentResolver().openInputStream(data.getData());
                 bitmap = BitmapFactory.decodeStream(inputStream);
+                btn_dec.setEnabled(false);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        if (resultCode == RESULT_OK && requestCode == 2) {
+            try {
+                encInputStream = getContentResolver().openInputStream(data.getData());
+                btn_enc.setEnabled(false);
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
