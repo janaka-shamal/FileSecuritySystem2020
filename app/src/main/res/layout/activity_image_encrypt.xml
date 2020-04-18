@@ -11,6 +11,8 @@
         android:layout_height="match_parent"
         android:id="@+id/imageView"
         />
+
+
     <LinearLayout
         android:id="@+id/layout_group"
         android:layout_width="match_parent"
@@ -36,4 +38,6 @@
 
 
     </LinearLayout>
+
+
 </RelativeLayout>

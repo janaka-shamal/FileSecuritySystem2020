@@ -2,9 +2,11 @@ package com.example.filesecuritysystem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,7 +15,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codekidlabs.storagechooser.StorageChooser;
@@ -41,11 +46,19 @@ import javax.crypto.NoSuchPaddingException;
 
 public class ImageEncrypt extends AppCompatActivity {
     private static final String FILE_NAME_DEC ="jnk.png" ;
+    //diaolog box attributes
+    Button btn_ok,btn_pick_file,btn_location;
+    TextView txt_file,txt_location;
+    EditText txt_file_name,txt_password;
+    CheckBox delete_box;
+
+    //imageencryptor attribute
     Button btn_enc,btn_dec;
     ImageView imageView;
     Bitmap bitmap;
     InputStream encInputStream;
     File encDir,decDir;
+    Dialog enc_dialog,dec_dialog;
     private static final String FILE_NAME_ENC="jnk";
     String my_key="jdwztahttruvphdm";
     String my_spec_key="risxjdoxqfhatuph";
@@ -53,10 +66,15 @@ public class ImageEncrypt extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_encrypt);
-
         btn_enc=(Button)findViewById(R.id.btn_encrypt);
         btn_dec=(Button)findViewById(R.id.btn_decrypt);
         imageView = (ImageView)findViewById(R.id.imageView);
+
+        //dialog box initiate
+        enc_dialog=new Dialog(this);
+        dec_dialog=new Dialog(this);
+
+        //runtime permission check
         Dexter.withActivity(this)
                 .withPermissions(new String[]{
                         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -77,16 +95,15 @@ public class ImageEncrypt extends AppCompatActivity {
                     }
                 }).check();
 
-        //encryption
+
+        //image encryption
         btn_enc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(bitmap!=null){
+                if(bitmap!=null && encDir!=null){
                 ByteArrayOutputStream stream=new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG,100,stream);
                 InputStream is= new ByteArrayInputStream(stream.toByteArray());
-
-                if(encDir!=null){
                 File outputFileEnc=new File(encDir,FILE_NAME_ENC);
 
                 try {
@@ -106,35 +123,26 @@ public class ImageEncrypt extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }}else{
-                    Toast.makeText(ImageEncrypt.this,"Select Location to Save Encrypted File!!",Toast.LENGTH_SHORT).show();
-                   ShowDirectoryPicker("enc");
+                    showEncPopup();
                 }
 
                 }
-                else{
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    intent.setType("image/*");
-                    startActivityForResult(Intent.createChooser(intent,"Pick an Image"),1);
-                    Toast.makeText(ImageEncrypt.this,"Select an Image to Encrypt!",Toast.LENGTH_SHORT).show();
-
-                }
-
-            }
         });
 
 
-        //decryption
+        //image decryption
         btn_dec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(encInputStream!=null){
-                    if(decDir!=null){
+                if(encInputStream!=null && decDir!=null){
                 try{
                     File outputFileDec = new File(decDir,FILE_NAME_DEC);
                     Encryptor.decryptToFile(my_key,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
                     imageView.setImageURI(Uri.fromFile(outputFileDec));
                     //deletion of the file
-                    //outputFileDec.delete();
+                    if(delete_box.isChecked()){
+                        outputFileDec.delete();
+                    }
                     Toast.makeText(ImageEncrypt.this, "Decrypted", Toast.LENGTH_SHORT).show();
                     btn_enc.setEnabled(true);
                     encInputStream=null;
@@ -149,22 +157,18 @@ public class ImageEncrypt extends AppCompatActivity {
                     e.printStackTrace();
                 } catch (NoSuchPaddingException e) {
                     e.printStackTrace();
-                }}
-                    else{
-                        ShowDirectoryPicker("dec");
-                    }
-            }else{
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    intent.setType("application/*");
-                    startActivityForResult(Intent.createChooser(intent,"Pick an Encrypted Image"),2);
-                    Toast.makeText(ImageEncrypt.this,"Select a Encrypted Image",Toast.LENGTH_SHORT).show();
-            }
+                }
+
+                }else{
+                    showDecPopup();
+                }
             }
         });
 
 
     }
 
+    //select image to encrypt
     @SuppressLint("MissingSuperCall")
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == RESULT_OK && requestCode == 1) {
@@ -172,6 +176,8 @@ public class ImageEncrypt extends AppCompatActivity {
                 InputStream inputStream = getContentResolver().openInputStream(data.getData());
                 bitmap = BitmapFactory.decodeStream(inputStream);
                 btn_dec.setEnabled(false);
+                txt_file.setText(data.getData().getPath());
+                Toast.makeText(ImageEncrypt.this, "The Selected Image is : " + data.getData().getPath(), Toast.LENGTH_SHORT).show();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -179,6 +185,7 @@ public class ImageEncrypt extends AppCompatActivity {
         if (resultCode == RESULT_OK && requestCode == 2) {
             try {
                 encInputStream = getContentResolver().openInputStream(data.getData());
+                txt_file.setText(data.getData().getPath());
                 btn_enc.setEnabled(false);
 
             } catch (FileNotFoundException e) {
@@ -186,9 +193,11 @@ public class ImageEncrypt extends AppCompatActivity {
             }
         }
     }
+
+
     //get Directory of the saving place
     public void ShowDirectoryPicker(final String type){
-        // 1. Initialize dialog
+        // Initialize dialog
         final StorageChooser chooser = new StorageChooser.Builder()
                 .withActivity(ImageEncrypt.this)
                 .withFragmentManager(getFragmentManager())
@@ -196,7 +205,7 @@ public class ImageEncrypt extends AppCompatActivity {
                 .allowCustomPath(true)
                 .setType(StorageChooser.DIRECTORY_CHOOSER)
                 .build();
-        // 2. Retrieve the selected path by the user and show in a toast !
+        //Retrieve the selected path by the user and show in a toast !
         chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
             @Override
             public void onSelect(String path) {
@@ -205,11 +214,96 @@ public class ImageEncrypt extends AppCompatActivity {
                 else{
                     decDir=new File(path);
                 }
+                txt_location.setText(path);
                 Toast.makeText(ImageEncrypt.this, "The selected path is : " + path, Toast.LENGTH_SHORT).show();
             }
         });
-        // 3. Display File Picker !
+        //Display File Picker !
         chooser.show();
+    }
+
+   //encryption form popup
+    private void showEncPopup(){
+
+        enc_dialog.setContentView(R.layout.enc_layout);
+        btn_ok=(Button)enc_dialog.findViewById(R.id.btn_ok);
+        btn_pick_file=(Button)enc_dialog.findViewById(R.id.btn_pick_file);
+        btn_location=(Button)enc_dialog.findViewById(R.id.btn_location);
+        txt_file=(TextView)enc_dialog.findViewById(R.id.txt_file);
+        txt_location=(TextView)enc_dialog.findViewById(R.id.txt_location);
+        txt_file_name=(EditText)enc_dialog.findViewById(R.id.txt_file_name);
+        txt_password=(EditText)enc_dialog.findViewById(R.id.txt_password);
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(encDir!=null && bitmap!=null){
+                enc_dialog.dismiss();
+                }
+                else{
+                    Toast.makeText(ImageEncrypt.this,"Fill all the fields",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        btn_pick_file.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ImageEncrypt.this,"Select an Image to Encrypt!",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(Intent.createChooser(intent,"Pick an Image"),1);
+
+            }
+        });
+        btn_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ImageEncrypt.this,"Select Location to Save Encrypted File!!",Toast.LENGTH_SHORT).show();
+                ShowDirectoryPicker("enc");
+            }
+        });
+        enc_dialog.show();
+    }
+
+    //decryption form popup
+    private void showDecPopup(){
+        dec_dialog.setContentView(R.layout.dec_layout);
+        btn_ok=(Button)dec_dialog.findViewById(R.id.btn_ok);
+        btn_pick_file=(Button)dec_dialog.findViewById(R.id.btn_pick_file);
+        btn_location=(Button)dec_dialog.findViewById(R.id.btn_location);
+        txt_file=(TextView)dec_dialog.findViewById(R.id.txt_file);
+        txt_location=(TextView)dec_dialog.findViewById(R.id.txt_location);
+        txt_file_name=(EditText)dec_dialog.findViewById(R.id.txt_file_name);
+        txt_password=(EditText)dec_dialog.findViewById(R.id.txt_password);
+        delete_box=(CheckBox)dec_dialog.findViewById(R.id.delete);
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(decDir!=null){
+                    dec_dialog.dismiss();
+                }
+                else{
+                    Toast.makeText(ImageEncrypt.this,"Fill all the fields",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        btn_pick_file.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("application/*");
+                startActivityForResult(Intent.createChooser(intent,"Pick an Encrypted Image"),2);
+                Toast.makeText(ImageEncrypt.this,"Select a Encrypted Image",Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        btn_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ImageEncrypt.this,"Select Location to Save Decrypted File!!",Toast.LENGTH_SHORT).show();
+                ShowDirectoryPicker("dec");
+            }
+        });
+        dec_dialog.show();
     }
 
 
