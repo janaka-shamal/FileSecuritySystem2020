@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.codekidlabs.storagechooser.StorageChooser;
 import com.example.filesecuritysystem.Utils.Encryptor;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -33,11 +34,11 @@ import java.util.List;
 import javax.crypto.NoSuchPaddingException;
 
 public class AudioEncrypt extends AppCompatActivity {
-    private static final String FILE_NAME_DEC ="jnk.mp3" ;
+    private String FILE_NAME_DEC ="jnk.mp3";
     Button btn_enc,btn_dec;
     InputStream inputStream,encInputStream;
 
-    File myDir;
+    File encDir,decDir;
     private static final String FILE_NAME_ENC="jnk";
     String my_key="jdwztahttruvphdm";
     String my_spec_key="risxjdoxqfhatuph";
@@ -47,7 +48,6 @@ public class AudioEncrypt extends AppCompatActivity {
         setContentView(R.layout.activity_audio_encrypt);
         btn_enc=(Button)findViewById(R.id.btn_encrypt);
         btn_dec=(Button)findViewById(R.id.btn_decrypt);
-        myDir=new File(Environment.getExternalStorageDirectory().toString());
         Dexter.withActivity(this)
                 .withPermissions(new String[]{
                         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -71,13 +71,16 @@ public class AudioEncrypt extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 InputStream is= inputStream;
-                File outputFileEnc=new File(myDir,FILE_NAME_ENC);
+
                 if(inputStream!=null) {
+                    if(encDir!=null){
                     try {
+                        File outputFileEnc=new File(encDir,FILE_NAME_ENC);
                         Encryptor.encryptToFile(my_key, my_spec_key, is, new FileOutputStream(outputFileEnc));
                         Toast.makeText(AudioEncrypt.this, "Ecrypted!!", Toast.LENGTH_SHORT).show();
                         btn_dec.setEnabled(true);
                         inputStream=null;
+                        encDir=null;
                     } catch (NoSuchPaddingException e) {
                         e.printStackTrace();
                     } catch (NoSuchAlgorithmException e) {
@@ -88,6 +91,9 @@ public class AudioEncrypt extends AppCompatActivity {
                         e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
+                    }}else{
+                        Toast.makeText(AudioEncrypt.this, "Select a Location to Save!!", Toast.LENGTH_SHORT).show();
+                        ShowDirectoryPicker("enc");
                     }
                 }else{
                     Toast.makeText(AudioEncrypt.this, "Select an Audio to Encrypt!!", Toast.LENGTH_SHORT).show();
@@ -105,16 +111,19 @@ public class AudioEncrypt extends AppCompatActivity {
         btn_dec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File outputFileDec = new File(myDir,FILE_NAME_DEC);
+
                 //File encFile=new File(myDir,FILE_NAME_ENC);
                 if(encInputStream!=null){
+                    if(decDir!=null){
                 try{
+                    File outputFileDec = new File(decDir,FILE_NAME_DEC);
                     Encryptor.decryptToFile(my_key,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
                     //deletion of the file
                     //outputFileDec.delete();
                     Toast.makeText(AudioEncrypt.this, "Decrypted", Toast.LENGTH_SHORT).show();
                     btn_enc.setEnabled(true);
                     encInputStream=null;
+                    decDir=null;
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (NoSuchAlgorithmException e) {
@@ -126,6 +135,10 @@ public class AudioEncrypt extends AppCompatActivity {
                 } catch (NoSuchPaddingException e) {
                     e.printStackTrace();
                 }}else{
+                        Toast.makeText(AudioEncrypt.this, "Select a Location to Save!!", Toast.LENGTH_SHORT).show();
+                        ShowDirectoryPicker("dec");
+                    }
+                }else{
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("application/*");
                     startActivityForResult(Intent.createChooser(intent,"Pick an Encrypted Audio"),2);
@@ -144,6 +157,7 @@ public class AudioEncrypt extends AppCompatActivity {
         if (resultCode == RESULT_OK && requestCode == 1) {
             try {
                 inputStream = getContentResolver().openInputStream(data.getData());
+
                 btn_dec.setEnabled(false);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -157,5 +171,30 @@ public class AudioEncrypt extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+    //get Directory of the saving place
+    public void ShowDirectoryPicker(final String type){
+        // 1. Initialize dialog
+        final StorageChooser chooser = new StorageChooser.Builder()
+                .withActivity(AudioEncrypt.this)
+                .withFragmentManager(getFragmentManager())
+                .withMemoryBar(true)
+                .allowCustomPath(true)
+                .setType(StorageChooser.DIRECTORY_CHOOSER)
+                .build();
+        // 2. Retrieve the selected path by the user and show in a toast !
+        chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
+            @Override
+            public void onSelect(String path) {
+                if(type=="enc"){
+                    encDir=new File(path);}
+                else{
+                    decDir=new File(path);
+                }
+                Toast.makeText(AudioEncrypt.this, "The selected path is : " + path, Toast.LENGTH_SHORT).show();
+            }
+        });
+        // 3. Display File Picker !
+        chooser.show();
     }
 }

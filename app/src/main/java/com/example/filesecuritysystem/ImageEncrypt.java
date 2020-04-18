@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.codekidlabs.storagechooser.StorageChooser;
 import com.example.filesecuritysystem.Utils.Encryptor;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -44,7 +45,7 @@ public class ImageEncrypt extends AppCompatActivity {
     ImageView imageView;
     Bitmap bitmap;
     InputStream encInputStream;
-    File myDir;
+    File encDir,decDir;
     private static final String FILE_NAME_ENC="jnk";
     String my_key="jdwztahttruvphdm";
     String my_spec_key="risxjdoxqfhatuph";
@@ -56,7 +57,6 @@ public class ImageEncrypt extends AppCompatActivity {
         btn_enc=(Button)findViewById(R.id.btn_encrypt);
         btn_dec=(Button)findViewById(R.id.btn_decrypt);
         imageView = (ImageView)findViewById(R.id.imageView);
-        myDir=new File(Environment.getExternalStorageDirectory().toString());
         Dexter.withActivity(this)
                 .withPermissions(new String[]{
                         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -81,22 +81,18 @@ public class ImageEncrypt extends AppCompatActivity {
         btn_enc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //bitmap convertion
-                //Drawable drawable = ContextCompat.getDrawable(MainActivity.this,R.drawable.janaka);
-                //BitmapDrawable bitmapDrawable = (BitmapDrawable)drawable;
-                //Bitmap bitmap1=bitmapDrawable.getBitmap();
-
                 if(bitmap!=null){
                 ByteArrayOutputStream stream=new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG,100,stream);
                 InputStream is= new ByteArrayInputStream(stream.toByteArray());
 
-                //
-                File outputFileEnc=new File(myDir,FILE_NAME_ENC);
+                if(encDir!=null){
+                File outputFileEnc=new File(encDir,FILE_NAME_ENC);
 
                 try {
                     Encryptor.encryptToFile(my_key,my_spec_key,is,new FileOutputStream(outputFileEnc));
                     Toast.makeText(ImageEncrypt.this,"Ecrypted!!",Toast.LENGTH_SHORT).show();
+                    encDir=null;
                     btn_dec.setEnabled(true);
                     bitmap=null;
                 } catch (NoSuchPaddingException e) {
@@ -109,7 +105,12 @@ public class ImageEncrypt extends AppCompatActivity {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
-                }}
+                }}else{
+                    Toast.makeText(ImageEncrypt.this,"Select Location to Save Encrypted File!!",Toast.LENGTH_SHORT).show();
+                   ShowDirectoryPicker("enc");
+                }
+
+                }
                 else{
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("image/*");
@@ -120,14 +121,16 @@ public class ImageEncrypt extends AppCompatActivity {
 
             }
         });
+
+
         //decryption
         btn_dec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File outputFileDec = new File(myDir,FILE_NAME_DEC);
-                //File encFile=new File(myDir,FILE_NAME_ENC);
                 if(encInputStream!=null){
+                    if(decDir!=null){
                 try{
+                    File outputFileDec = new File(decDir,FILE_NAME_DEC);
                     Encryptor.decryptToFile(my_key,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
                     imageView.setImageURI(Uri.fromFile(outputFileDec));
                     //deletion of the file
@@ -135,6 +138,7 @@ public class ImageEncrypt extends AppCompatActivity {
                     Toast.makeText(ImageEncrypt.this, "Decrypted", Toast.LENGTH_SHORT).show();
                     btn_enc.setEnabled(true);
                     encInputStream=null;
+                    decDir=null;
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (NoSuchAlgorithmException e) {
@@ -145,7 +149,10 @@ public class ImageEncrypt extends AppCompatActivity {
                     e.printStackTrace();
                 } catch (NoSuchPaddingException e) {
                     e.printStackTrace();
-                }
+                }}
+                    else{
+                        ShowDirectoryPicker("dec");
+                    }
             }else{
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("application/*");
@@ -179,5 +186,31 @@ public class ImageEncrypt extends AppCompatActivity {
             }
         }
     }
+    //get Directory of the saving place
+    public void ShowDirectoryPicker(final String type){
+        // 1. Initialize dialog
+        final StorageChooser chooser = new StorageChooser.Builder()
+                .withActivity(ImageEncrypt.this)
+                .withFragmentManager(getFragmentManager())
+                .withMemoryBar(true)
+                .allowCustomPath(true)
+                .setType(StorageChooser.DIRECTORY_CHOOSER)
+                .build();
+        // 2. Retrieve the selected path by the user and show in a toast !
+        chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
+            @Override
+            public void onSelect(String path) {
+                if(type=="enc"){
+                    encDir=new File(path);}
+                else{
+                    decDir=new File(path);
+                }
+                Toast.makeText(ImageEncrypt.this, "The selected path is : " + path, Toast.LENGTH_SHORT).show();
+            }
+        });
+        // 3. Display File Picker !
+        chooser.show();
+    }
+
 
 }
