@@ -38,7 +38,7 @@ import java.util.List;
 import javax.crypto.NoSuchPaddingException;
 
 public class VideoEncrypt extends AppCompatActivity {
-    private static final String FILE_NAME_DEC ="jnk.mp4" ;
+    private String FILE_NAME_DEC ="DecryptedVideo.mp4" ;
     //diaolog box attributes
     Button btn_ok,btn_pick_file,btn_location;
     TextView txt_file,txt_location;
@@ -49,7 +49,7 @@ public class VideoEncrypt extends AppCompatActivity {
     Button btn_enc,btn_dec;
     InputStream inputStream,encInputStream;
     File encDir,decDir;
-    private static final String FILE_NAME_ENC="jnk";
+    private String FILE_NAME_ENC="Enc";
     String my_key="jdwztahttruvphdm";
     String my_spec_key="risxjdoxqfhatuph";
     @Override
@@ -213,6 +213,7 @@ public class VideoEncrypt extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(encDir!=null && inputStream!=null){
+                    FILE_NAME_ENC=txt_file_name.getText().toString()+"Enc";
                     enc_dialog.dismiss();
                 }
                 else{
@@ -255,6 +256,7 @@ public class VideoEncrypt extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(encInputStream!=null && decDir!=null){
+                    FILE_NAME_DEC=txt_file_name.getText().toString()+".mp4";
                     dec_dialog.dismiss();
                 }
                 else{
