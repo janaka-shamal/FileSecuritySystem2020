@@ -45,7 +45,7 @@ import java.util.List;
 import javax.crypto.NoSuchPaddingException;
 
 public class ImageEncrypt extends AppCompatActivity {
-    private static final String FILE_NAME_DEC ="jnk.png" ;
+    private String FILE_NAME_DEC ="decryptedImage.png" ;
     //diaolog box attributes
     Button btn_ok,btn_pick_file,btn_location;
     TextView txt_file,txt_location;
@@ -59,7 +59,7 @@ public class ImageEncrypt extends AppCompatActivity {
     InputStream encInputStream;
     File encDir,decDir;
     Dialog enc_dialog,dec_dialog;
-    private static final String FILE_NAME_ENC="jnk";
+    private String FILE_NAME_ENC="Enc";
     String my_key="jdwztahttruvphdm";
     String my_spec_key="risxjdoxqfhatuph";
     @Override
@@ -139,11 +139,11 @@ public class ImageEncrypt extends AppCompatActivity {
                     File outputFileDec = new File(decDir,FILE_NAME_DEC);
                     Encryptor.decryptToFile(my_key,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
                     imageView.setImageURI(Uri.fromFile(outputFileDec));
+                    Toast.makeText(ImageEncrypt.this, "Decrypted", Toast.LENGTH_SHORT).show();
                     //deletion of the file
                     if(delete_box.isChecked()){
                         outputFileDec.delete();
                     }
-                    Toast.makeText(ImageEncrypt.this, "Decrypted", Toast.LENGTH_SHORT).show();
                     btn_enc.setEnabled(true);
                     encInputStream=null;
                     decDir=null;
@@ -237,7 +237,8 @@ public class ImageEncrypt extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(encDir!=null && bitmap!=null){
-                enc_dialog.dismiss();
+                    FILE_NAME_ENC=txt_file_name.getText().toString()+"Enc";
+                    enc_dialog.dismiss();
                 }
                 else{
                     Toast.makeText(ImageEncrypt.this,"Fill all the fields",Toast.LENGTH_SHORT).show();
@@ -275,10 +276,12 @@ public class ImageEncrypt extends AppCompatActivity {
         txt_file_name=(EditText)dec_dialog.findViewById(R.id.txt_file_name);
         txt_password=(EditText)dec_dialog.findViewById(R.id.txt_password);
         delete_box=(CheckBox)dec_dialog.findViewById(R.id.delete);
+
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(decDir!=null){
+                if(encInputStream!=null && decDir!=null){
+                    FILE_NAME_DEC=txt_file_name.getText().toString()+".png";
                     dec_dialog.dismiss();
                 }
                 else{
