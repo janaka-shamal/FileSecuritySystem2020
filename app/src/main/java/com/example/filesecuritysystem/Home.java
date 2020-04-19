@@ -17,6 +17,7 @@ public class Home extends AppCompatActivity {
         final Button img=(Button)findViewById(R.id.img);
         final Button video=(Button)findViewById(R.id.video);
         final Button audio=(Button)findViewById(R.id.audio);
+        final Button folder=(Button)findViewById(R.id.folder);
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -37,6 +38,14 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent n = new Intent(Home.this,AudioEncrypt.class);
+                startActivity(n);
+
+            }
+        });
+        folder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent n = new Intent(Home.this,FolderEncrypt.class);
                 startActivity(n);
 
             }
