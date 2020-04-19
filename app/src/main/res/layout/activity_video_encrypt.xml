@@ -22,22 +22,42 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"></VideoView>
 
+        <CheckBox
+            android:id="@+id/delete_box2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="65dp"
+            android:text="Delete After Playing"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnOk"
+            app:layout_constraintHorizontal_bias="0.701"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/videoView"
+            app:layout_constraintVertical_bias="0.0" />
+
         <Button
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/playBtnVideo"
-            android:background="@drawable/play"
+            android:id="@+id/btnOk"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="65dp"
+            android:background="@drawable/ok"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.855"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/videoView">
-        </Button>
+            app:layout_constraintTop_toBottomOf="@+id/videoView"
+            app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <ImageView
+        android:id="@+id/video1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/video1"
-        android:id="@+id/video1"></ImageView>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"></ImageView>
     <LinearLayout
         android:id="@+id/layout_group"
         android:layout_width="match_parent"

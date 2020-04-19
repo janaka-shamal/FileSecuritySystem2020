@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -45,9 +46,11 @@ public class VideoEncrypt extends AppCompatActivity {
     private String FILE_NAME_DEC ="DecryptedVideo.mp4" ;
     //VideoPlayer Attributes
     VideoView videoView;
-    Button playBtnVideo;
     ConstraintLayout videoPlayer;
     ImageView video1;
+    MediaController mediaController;
+    CheckBox deleteBox2;
+    Button btnOk;
     //diaolog box attributes
     Button btn_ok,btn_pick_file,btn_location;
     TextView txt_file,txt_location;
@@ -57,7 +60,7 @@ public class VideoEncrypt extends AppCompatActivity {
 
     Button btn_enc,btn_dec;
     InputStream inputStream,encInputStream;
-    File encDir,decDir;
+    File encDir,decDir,outputFileDec;
     String decLocation;
     private String FILE_NAME_ENC="Enc";
     String my_key="jdwztahttruvphdm";
@@ -66,17 +69,18 @@ public class VideoEncrypt extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_encrypt);
-
         btn_enc=(Button)findViewById(R.id.btn_encrypt);
         btn_dec=(Button)findViewById(R.id.btn_decrypt);
         //dialog box initiate
         enc_dialog=new Dialog(this);
         dec_dialog=new Dialog(this);
-
-        playBtnVideo=(Button)findViewById(R.id.playBtnVideo);
+        //video player
         videoView=(VideoView)findViewById(R.id.videoView);
         videoPlayer=(ConstraintLayout)findViewById(R.id.videoPlayer);
         video1=(ImageView)findViewById(R.id.video1);
+        mediaController=new MediaController(this);
+        btnOk=(Button)findViewById(R.id.btnOk);
+        deleteBox2=(CheckBox)findViewById(R.id.delete_box2);
         Dexter.withActivity(this)
                 .withPermissions(new String[]{
                         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -105,6 +109,8 @@ public class VideoEncrypt extends AppCompatActivity {
                 try {
                     File outputFileEnc=new File(encDir,FILE_NAME_ENC);
                     Encryptor.encryptToFile(my_key,my_spec_key,is,new FileOutputStream(outputFileEnc));
+                    video1.setVisibility(View.VISIBLE);
+                    videoPlayer.setVisibility(View.INVISIBLE);
                     Toast.makeText(VideoEncrypt.this,"Ecrypted!!",Toast.LENGTH_SHORT).show();
                     btn_dec.setEnabled(true);
                     inputStream=null;
@@ -127,6 +133,17 @@ public class VideoEncrypt extends AppCompatActivity {
 
             }
         });
+        //check box
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(deleteBox2.isChecked()){
+                    outputFileDec.delete();
+                    Toast.makeText(VideoEncrypt.this,"Output File is Deleted!",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         //decryption
         btn_dec.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,15 +152,17 @@ public class VideoEncrypt extends AppCompatActivity {
                 //File encFile=new File(myDir,FILE_NAME_ENC);
                 if(encInputStream!=null&&decDir!=null){
                 try{
-                    File outputFileDec = new File(decDir,FILE_NAME_DEC);
+                    outputFileDec = new File(decDir,FILE_NAME_DEC);
                     Encryptor.decryptToFile(my_key,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
                     video1.setVisibility(View.INVISIBLE);
                     videoPlayer.setVisibility(View.VISIBLE);
                     Uri uri=Uri.parse(decLocation+File.separator+FILE_NAME_DEC);
                     videoView.setVideoURI(uri);
+                    videoView.setMediaController(mediaController);
+                    mediaController.setAnchorView(videoView);
                     Toast.makeText(VideoEncrypt.this, decLocation+File.separator+FILE_NAME_DEC, Toast.LENGTH_SHORT).show();
                     if(delete_box.isChecked()){
-                        outputFileDec.delete();
+
                     }
                     btn_enc.setEnabled(true);
                     encInputStream=null;
@@ -162,12 +181,6 @@ public class VideoEncrypt extends AppCompatActivity {
                         showDecPopup();
                     }
 
-            }
-        });
-        playBtnVideo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                videoView.start();
             }
         });
 
@@ -278,6 +291,7 @@ public class VideoEncrypt extends AppCompatActivity {
         txt_file_name=(EditText)dec_dialog.findViewById(R.id.txt_file_name);
         txt_password=(EditText)dec_dialog.findViewById(R.id.txt_password);
         delete_box=(CheckBox)dec_dialog.findViewById(R.id.delete);
+        delete_box.setVisibility(View.INVISIBLE);
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
