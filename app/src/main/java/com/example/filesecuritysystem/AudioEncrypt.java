@@ -2,17 +2,23 @@ package com.example.filesecuritysystem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,15 +45,26 @@ import javax.crypto.NoSuchPaddingException;
 
 public class AudioEncrypt extends AppCompatActivity {
     private String FILE_NAME_DEC ="DecryptedAudio.mp3";
+    //Music Player attributes
+    Button playBtn,btn_finish;
+    SeekBar positionBar,volumeBar;
+    TextView elapsedTimeLabel,remainingTimeLabel,song_name;
+    MediaPlayer player;
+    String audioPath;
+    CheckBox delete_audio;
+    int totalTime;
+
     //diaolog box attributes
     Button btn_ok,btn_pick_file,btn_location;
     TextView txt_file,txt_location;
     EditText txt_file_name,txt_password;
     CheckBox delete_box;
     Dialog enc_dialog,dec_dialog;
+    ConstraintLayout audio_player;
 
     Button btn_enc,btn_dec;
     InputStream inputStream,encInputStream;
+    File outputFileDec;
     File encDir,decDir;
     private String FILE_NAME_ENC="Enc";
     String my_key="jdwztahttruvphdm";
@@ -61,6 +78,65 @@ public class AudioEncrypt extends AppCompatActivity {
         //dialog box initiate
         enc_dialog=new Dialog(this);
         dec_dialog=new Dialog(this);
+
+        //music player initiate
+        playBtn=(Button)findViewById(R.id.playBtn);
+
+        elapsedTimeLabel=(TextView)findViewById(R.id.elapsedTimeLabel);
+        remainingTimeLabel=(TextView)findViewById(R.id.remainingTimeLabel);
+        btn_finish=(Button)findViewById(R.id.btn_finish);
+        delete_audio=(CheckBox)findViewById(R.id.delete_audio);
+        player = new MediaPlayer();
+        audio_player=(ConstraintLayout)findViewById(R.id.audio_player);
+        song_name=(TextView)findViewById(R.id.song_name);
+        player.setVolume(0.5f,0.5f);
+        player.seekTo(0);
+        player.setLooping(true);
+        volumeBar=(SeekBar)findViewById(R.id.volumeBar);
+        volumeBar.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        float volumeNum=progress/100f;
+                        player.setVolume(volumeNum,volumeNum);
+                        if(volumeNum==0){
+                            Toast.makeText(AudioEncrypt.this, "Mute", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+                }
+        );
+
+        positionBar=(SeekBar)findViewById(R.id.positionBar);
+        positionBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(fromUser){
+                    player.seekTo(progress);
+                    positionBar.setProgress(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
 
         Dexter.withActivity(this)
                 .withPermissions(new String[]{
@@ -84,10 +160,13 @@ public class AudioEncrypt extends AppCompatActivity {
         btn_enc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 InputStream is= inputStream;
                 if(inputStream!=null&& encDir!=null) {
 
                     try {
+                        audio_player.setVisibility(View.INVISIBLE);
+                        player.reset();
                         File outputFileEnc=new File(encDir,FILE_NAME_ENC);
                         Encryptor.encryptToFile(my_key, my_spec_key, is, new FileOutputStream(outputFileEnc));
                         Toast.makeText(AudioEncrypt.this, "Ecrypted!!", Toast.LENGTH_SHORT).show();
@@ -112,7 +191,18 @@ public class AudioEncrypt extends AppCompatActivity {
             }
         });
 
-
+        btn_finish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(delete_audio.isChecked() && outputFileDec!=null){
+                    outputFileDec.delete();
+                    Toast.makeText(AudioEncrypt.this, "OutPut File is Deleted", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(AudioEncrypt.this, "Not Selected Decrypted File", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         //decryption
         btn_dec.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,12 +211,27 @@ public class AudioEncrypt extends AppCompatActivity {
                 //File encFile=new File(myDir,FILE_NAME_ENC);
                 if(encInputStream!=null && decDir!=null){
                 try{
-                    File outputFileDec = new File(decDir,FILE_NAME_DEC);
+                    audio_player.setVisibility(View.VISIBLE);
+                    player.reset();
+                    playBtn.setBackgroundResource(R.drawable.play);
+
+                    totalTime=player.getDuration();
+                    outputFileDec = new File(decDir,FILE_NAME_DEC);
                     Encryptor.decryptToFile(my_key,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
                     Toast.makeText(AudioEncrypt.this, "Decrypted", Toast.LENGTH_SHORT).show();
 
-                    if(delete_box.isChecked()){
-                        outputFileDec.delete();
+                    if(audioPath!=null){
+                    try {
+                        song_name.setText(FILE_NAME_DEC);
+                        player.setDataSource(audioPath + File.separator + FILE_NAME_DEC);
+                        player.prepare();
+                        positionBar.setMax(player.getDuration());
+                        totalTime=player.getDuration();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }}
+                    else{
+                        Toast.makeText(AudioEncrypt.this, "No Audio File to Play", Toast.LENGTH_SHORT).show();
                     }
                     btn_enc.setEnabled(true);
                     encInputStream=null;
@@ -147,6 +252,23 @@ public class AudioEncrypt extends AppCompatActivity {
 
             }
         });
+
+        //Thread update postion
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(player!=null){
+                    try{
+                        Message message=new Message();
+                        message.what=player.getCurrentPosition();
+                        handler.sendMessage(message);
+                        Thread.sleep(1000);
+                    }catch (InterruptedException e){}
+                }
+            }
+        }).start();
+
 
 
 
@@ -191,6 +313,7 @@ public class AudioEncrypt extends AppCompatActivity {
                     encDir=new File(path);}
                 else{
                     decDir=new File(path);
+                    audioPath=path;
                 }
                 txt_location.setText(path);
                 Toast.makeText(AudioEncrypt.this, "The selected path is : " + path, Toast.LENGTH_SHORT).show();
@@ -254,6 +377,7 @@ public class AudioEncrypt extends AppCompatActivity {
         txt_file_name=(EditText)dec_dialog.findViewById(R.id.txt_file_name);
         txt_password=(EditText)dec_dialog.findViewById(R.id.txt_password);
         delete_box=(CheckBox)dec_dialog.findViewById(R.id.delete);
+        delete_box.setVisibility(View.INVISIBLE);
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -285,4 +409,35 @@ public class AudioEncrypt extends AppCompatActivity {
         });
         dec_dialog.show();
     }
+    public void playBtnClick(View view){
+        if(!player.isPlaying()){
+            player.start();
+            playBtn.setBackgroundResource(R.drawable.pause);
+    }else{
+            player.pause();
+            playBtn.setBackgroundResource(R.drawable.play);
+        }
+    }
+    private Handler handler=new Handler(){
+        public void handleMessage(Message message){
+            int currentPosition=message.what;
+            positionBar.setProgress(currentPosition);
+
+            String elapsedTime=createTimeLabel(currentPosition);
+            elapsedTimeLabel.setText(elapsedTime);
+
+            String remainingTime=createTimeLabel(totalTime-currentPosition);
+            remainingTimeLabel.setText("- "+remainingTime);
+        }
+    };
+    public String createTimeLabel(int time){
+        String timeLabel="";
+        int min=time/1000/60;
+        int sec=time/1000%60;
+        timeLabel=min+":";
+        if(sec<10)timeLabel+="0";
+        timeLabel+=sec;
+        return timeLabel;
+    }
 }
+
