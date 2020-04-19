@@ -10,6 +10,8 @@ import android.os.Bundle;
 import  android.widget.Button;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.akaita.android.circularseekbar.CircularSeekBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -23,13 +25,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        final String password="11.122.133.144.1";
         final StringBuilder pw=new StringBuilder();
         final Button access = (Button)findViewById(R.id.access);
         final CircularSeekBar circularSeekBar1=(CircularSeekBar)findViewById(R.id.seekbar1);
         final CircularSeekBar circularSeekBar2=(CircularSeekBar)findViewById(R.id.seekbar2);
         final CircularSeekBar circularSeekBar3=(CircularSeekBar)findViewById(R.id.seekbar3);
         final CircularSeekBar circularSeekBar4=(CircularSeekBar)findViewById(R.id.seekbar4);
+        final TextView changePassword=(TextView)findViewById(R.id.changePassword);
         circularSeekBar1.setRingColor(Color.YELLOW);
         circularSeekBar1.setProgressTextFormat(new DecimalFormat("###,###,##0.0"));
         circularSeekBar1.setOnCenterClickedListener(new CircularSeekBar.OnCenterClickedListener() {
@@ -172,8 +175,17 @@ public class MainActivity extends AppCompatActivity {
         access.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if((pw.toString()).equals(password)){
                 Intent fileSecurityHome = new Intent(MainActivity.this,Home.class);
-                startActivity(fileSecurityHome);
+                startActivity(fileSecurityHome);}
+                else {
+                    Toast.makeText(MainActivity.this,"WrongPassword! Try Again",Toast.LENGTH_SHORT).show();
+                    circularSeekBar1.setEnabled(true);
+                    circularSeekBar2.setEnabled(true);
+                    circularSeekBar3.setEnabled(true);
+                    circularSeekBar4.setEnabled(true);
+                    pw.delete(0,pw.length());
+                }
 
             }
         });
