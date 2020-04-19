@@ -2,19 +2,23 @@ package com.example.filesecuritysystem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.codekidlabs.storagechooser.StorageChooser;
 import com.example.filesecuritysystem.Utils.Encryptor;
@@ -39,6 +43,11 @@ import javax.crypto.NoSuchPaddingException;
 
 public class VideoEncrypt extends AppCompatActivity {
     private String FILE_NAME_DEC ="DecryptedVideo.mp4" ;
+    //VideoPlayer Attributes
+    VideoView videoView;
+    Button playBtnVideo;
+    ConstraintLayout videoPlayer;
+    ImageView video1;
     //diaolog box attributes
     Button btn_ok,btn_pick_file,btn_location;
     TextView txt_file,txt_location;
@@ -49,6 +58,7 @@ public class VideoEncrypt extends AppCompatActivity {
     Button btn_enc,btn_dec;
     InputStream inputStream,encInputStream;
     File encDir,decDir;
+    String decLocation;
     private String FILE_NAME_ENC="Enc";
     String my_key="jdwztahttruvphdm";
     String my_spec_key="risxjdoxqfhatuph";
@@ -62,6 +72,11 @@ public class VideoEncrypt extends AppCompatActivity {
         //dialog box initiate
         enc_dialog=new Dialog(this);
         dec_dialog=new Dialog(this);
+
+        playBtnVideo=(Button)findViewById(R.id.playBtnVideo);
+        videoView=(VideoView)findViewById(R.id.videoView);
+        videoPlayer=(ConstraintLayout)findViewById(R.id.videoPlayer);
+        video1=(ImageView)findViewById(R.id.video1);
         Dexter.withActivity(this)
                 .withPermissions(new String[]{
                         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -122,7 +137,11 @@ public class VideoEncrypt extends AppCompatActivity {
                 try{
                     File outputFileDec = new File(decDir,FILE_NAME_DEC);
                     Encryptor.decryptToFile(my_key,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
-                    Toast.makeText(VideoEncrypt.this, "Decrypted", Toast.LENGTH_SHORT).show();
+                    video1.setVisibility(View.INVISIBLE);
+                    videoPlayer.setVisibility(View.VISIBLE);
+                    Uri uri=Uri.parse(decLocation+File.separator+FILE_NAME_DEC);
+                    videoView.setVideoURI(uri);
+                    Toast.makeText(VideoEncrypt.this, decLocation+File.separator+FILE_NAME_DEC, Toast.LENGTH_SHORT).show();
                     if(delete_box.isChecked()){
                         outputFileDec.delete();
                     }
@@ -143,6 +162,12 @@ public class VideoEncrypt extends AppCompatActivity {
                         showDecPopup();
                     }
 
+            }
+        });
+        playBtnVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                videoView.start();
             }
         });
 
@@ -189,6 +214,7 @@ public class VideoEncrypt extends AppCompatActivity {
                     encDir=new File(path);}
                 else{
                     decDir=new File(path);
+                    decLocation=path;
                 }
                 txt_location.setText(path);
                 Toast.makeText(VideoEncrypt.this, "The selected path is : " + path, Toast.LENGTH_SHORT).show();
@@ -283,5 +309,6 @@ public class VideoEncrypt extends AppCompatActivity {
         });
         dec_dialog.show();
     }
+
 }
 

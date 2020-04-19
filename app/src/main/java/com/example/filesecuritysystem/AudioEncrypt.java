@@ -400,8 +400,8 @@ public class AudioEncrypt extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("application/*");
-                startActivityForResult(Intent.createChooser(intent,"Pick an Encrypted Image"),2);
-                Toast.makeText(AudioEncrypt.this,"Select a Encrypted Image",Toast.LENGTH_SHORT).show();
+                startActivityForResult(Intent.createChooser(intent,"Pick an Encrypted Audio"),2);
+                Toast.makeText(AudioEncrypt.this,"Select a Encrypted Audio",Toast.LENGTH_SHORT).show();
 
             }
         });
