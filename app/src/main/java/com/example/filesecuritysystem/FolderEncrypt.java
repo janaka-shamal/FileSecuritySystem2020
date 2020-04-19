@@ -50,9 +50,10 @@ public class FolderEncrypt extends AppCompatActivity {
 
     Button btn_enc,btn_dec;
     File fileZip;
+    ZipArchive zipArchive = new ZipArchive();
     InputStream inputStream,encInputStream;
     File encDir,decDir;
-    String encDirectory;
+    String encDirectory,decDirectory;
     private String FILE_NAME_ENC="Enc";
     String my_key="jdwztahttruvphdm";
     String my_spec_key="risxjdoxqfhatuph";
@@ -125,10 +126,9 @@ public class FolderEncrypt extends AppCompatActivity {
                     try{
                         File outputFileDec = new File(decDir,FILE_NAME_DEC);
                         Encryptor.decryptToFile(my_key,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
+                        zipArchive.unzip(decDir+"/"+FILE_NAME_DEC,decDirectory,"");
+                        outputFileDec.delete();
                         Toast.makeText(FolderEncrypt.this, "Decrypted", Toast.LENGTH_SHORT).show();
-                        if(delete_box.isChecked()){
-                            outputFileDec.delete();
-                        }
                         btn_enc.setEnabled(true);
                         encInputStream=null;
                         decDir=null;
@@ -185,6 +185,7 @@ public class FolderEncrypt extends AppCompatActivity {
                     Toast.makeText(FolderEncrypt.this, "The selected path is : " + path, Toast.LENGTH_SHORT).show();}
                 else if(type=="dec"){
                     decDir=new File(path);
+                    decDirectory=path;
                     txt_location.setText(path);
                     Toast.makeText(FolderEncrypt.this, "The selected path is : " + path, Toast.LENGTH_SHORT).show();
                 }else{
@@ -216,7 +217,6 @@ public class FolderEncrypt extends AppCompatActivity {
             public void onClick(View v) {
                 if(encDirectory!=""){
                     FILE_NAME_ENC=txt_file_name.getText().toString()+"Enc";
-                    ZipArchive zipArchive = new ZipArchive();
                     zipArchive.zip(encDirectory,encDirectory+"/file.zip","");
                     fileZip = new File(encDirectory+"/file.zip");
                     try {
@@ -259,6 +259,7 @@ public class FolderEncrypt extends AppCompatActivity {
         txt_file_name=(EditText)dec_dialog.findViewById(R.id.txt_file_name);
         txt_password=(EditText)dec_dialog.findViewById(R.id.txt_password);
         delete_box=(CheckBox)dec_dialog.findViewById(R.id.delete);
+        delete_box.setVisibility(View.INVISIBLE);
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
