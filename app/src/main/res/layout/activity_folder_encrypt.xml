@@ -5,6 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FolderEncrypt">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/folder1"
+        android:id="@+id/folder1"></ImageView>
     <LinearLayout
         android:id="@+id/layout_group"
         android:layout_width="match_parent"

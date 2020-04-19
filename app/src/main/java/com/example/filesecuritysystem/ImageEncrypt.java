@@ -54,7 +54,8 @@ public class ImageEncrypt extends AppCompatActivity {
 
     //imageencryptor attribute
     Button btn_enc,btn_dec;
-    ImageView imageView;
+    String encSource;
+    ImageView imageView,image1;
     Bitmap bitmap;
     InputStream encInputStream;
     File encDir,decDir;
@@ -69,7 +70,7 @@ public class ImageEncrypt extends AppCompatActivity {
         btn_enc=(Button)findViewById(R.id.btn_encrypt);
         btn_dec=(Button)findViewById(R.id.btn_decrypt);
         imageView = (ImageView)findViewById(R.id.imageView);
-
+        image1 = (ImageView)findViewById(R.id.image1);
         //dialog box initiate
         enc_dialog=new Dialog(this);
         dec_dialog=new Dialog(this);
@@ -107,6 +108,7 @@ public class ImageEncrypt extends AppCompatActivity {
                 File outputFileEnc=new File(encDir,FILE_NAME_ENC);
 
                 try {
+                    image1.setVisibility(View.VISIBLE);
                     Encryptor.encryptToFile(my_key,my_spec_key,is,new FileOutputStream(outputFileEnc));
                     Toast.makeText(ImageEncrypt.this,"Ecrypted!!",Toast.LENGTH_SHORT).show();
                     encDir=null;
@@ -138,6 +140,7 @@ public class ImageEncrypt extends AppCompatActivity {
                 try{
                     File outputFileDec = new File(decDir,FILE_NAME_DEC);
                     Encryptor.decryptToFile(my_key,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
+                    image1.setVisibility(View.INVISIBLE);
                     imageView.setImageURI(Uri.fromFile(outputFileDec));
                     Toast.makeText(ImageEncrypt.this, "Decrypted", Toast.LENGTH_SHORT).show();
                     //deletion of the file
@@ -175,6 +178,7 @@ public class ImageEncrypt extends AppCompatActivity {
             try {
                 InputStream inputStream = getContentResolver().openInputStream(data.getData());
                 bitmap = BitmapFactory.decodeStream(inputStream);
+                encSource=data.getData().getPath();
                 btn_dec.setEnabled(false);
                 txt_file.setText(data.getData().getPath());
                 Toast.makeText(ImageEncrypt.this, "The Selected Image is : " + data.getData().getPath(), Toast.LENGTH_SHORT).show();

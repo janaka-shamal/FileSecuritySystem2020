@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +43,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.crypto.NoSuchPaddingException;
+import javax.xml.transform.Source;
 
 public class AudioEncrypt extends AppCompatActivity {
     private String FILE_NAME_DEC ="DecryptedAudio.mp3";
@@ -58,11 +60,12 @@ public class AudioEncrypt extends AppCompatActivity {
     Button btn_ok,btn_pick_file,btn_location;
     TextView txt_file,txt_location;
     EditText txt_file_name,txt_password;
-    CheckBox delete_box;
+    CheckBox delete_box,deleteSource;
     Dialog enc_dialog,dec_dialog;
     ConstraintLayout audio_player;
 
     Button btn_enc,btn_dec;
+    ImageView audio1;
     InputStream inputStream,encInputStream;
     File outputFileDec;
     File encDir,decDir;
@@ -75,13 +78,13 @@ public class AudioEncrypt extends AppCompatActivity {
         setContentView(R.layout.activity_audio_encrypt);
         btn_enc=(Button)findViewById(R.id.btn_encrypt);
         btn_dec=(Button)findViewById(R.id.btn_decrypt);
+        audio1=(ImageView) findViewById(R.id.audio1);
         //dialog box initiate
         enc_dialog=new Dialog(this);
         dec_dialog=new Dialog(this);
 
         //music player initiate
         playBtn=(Button)findViewById(R.id.playBtn);
-
         elapsedTimeLabel=(TextView)findViewById(R.id.elapsedTimeLabel);
         remainingTimeLabel=(TextView)findViewById(R.id.remainingTimeLabel);
         btn_finish=(Button)findViewById(R.id.btn_finish);
@@ -166,6 +169,7 @@ public class AudioEncrypt extends AppCompatActivity {
 
                     try {
                         audio_player.setVisibility(View.INVISIBLE);
+                        audio1.setVisibility(View.VISIBLE);
                         player.reset();
                         File outputFileEnc=new File(encDir,FILE_NAME_ENC);
                         Encryptor.encryptToFile(my_key, my_spec_key, is, new FileOutputStream(outputFileEnc));
@@ -211,6 +215,7 @@ public class AudioEncrypt extends AppCompatActivity {
                 //File encFile=new File(myDir,FILE_NAME_ENC);
                 if(encInputStream!=null && decDir!=null){
                 try{
+                    audio1.setVisibility(View.INVISIBLE);
                     audio_player.setVisibility(View.VISIBLE);
                     player.reset();
                     playBtn.setBackgroundResource(R.drawable.play);

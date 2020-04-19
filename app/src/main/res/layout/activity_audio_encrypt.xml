@@ -5,7 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AudioEncrypt">
-
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/audio1"
+        android:id="@+id/audio1"
+        ></ImageView>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/audio_player"
         android:layout_width="match_parent"

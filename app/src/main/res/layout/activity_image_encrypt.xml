@@ -11,6 +11,13 @@
         android:layout_height="match_parent"
         android:id="@+id/imageView"
         />
+    <ImageView
+        android:layout_above="@+id/layout_group"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/image1"
+        android:src="@drawable/image1"
+        />
 
 
     <LinearLayout
