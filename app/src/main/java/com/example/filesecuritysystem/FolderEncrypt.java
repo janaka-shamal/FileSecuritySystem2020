@@ -257,6 +257,7 @@ public class FolderEncrypt extends AppCompatActivity {
         txt_file=(TextView)dec_dialog.findViewById(R.id.txt_file);
         txt_location=(TextView)dec_dialog.findViewById(R.id.txt_location);
         txt_file_name=(EditText)dec_dialog.findViewById(R.id.txt_file_name);
+        txt_file_name.setVisibility(View.INVISIBLE);
         txt_password=(EditText)dec_dialog.findViewById(R.id.txt_password);
         delete_box=(CheckBox)dec_dialog.findViewById(R.id.delete);
         delete_box.setVisibility(View.INVISIBLE);
@@ -264,7 +265,7 @@ public class FolderEncrypt extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(encInputStream!=null && decDir!=null){
-                    FILE_NAME_DEC=txt_file_name.getText().toString()+".zip";
+                    FILE_NAME_DEC=txt_file_name.getText().toString()+"Folder.zip";
                     dec_dialog.dismiss();
                 }
                 else{
