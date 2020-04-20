@@ -175,18 +175,18 @@ public class MainActivity extends AppCompatActivity {
         access.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //if((pw.toString()).equals(password)){
+                if((pw.toString()).equals(password)){
                 Intent fileSecurityHome = new Intent(MainActivity.this,Home.class);
                 startActivity(fileSecurityHome);
-            //}
-                /*else {
+            }
+                else {
                     Toast.makeText(MainActivity.this,"WrongPassword! Try Again",Toast.LENGTH_SHORT).show();
                     circularSeekBar1.setEnabled(true);
                     circularSeekBar2.setEnabled(true);
                     circularSeekBar3.setEnabled(true);
                     circularSeekBar4.setEnabled(true);
                     pw.delete(0,pw.length());
-                }*/
+                }
 
             }
         });
