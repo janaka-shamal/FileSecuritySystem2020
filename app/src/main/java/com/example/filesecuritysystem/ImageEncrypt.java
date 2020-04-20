@@ -62,6 +62,7 @@ public class ImageEncrypt extends AppCompatActivity {
     Dialog enc_dialog,dec_dialog;
     private String FILE_NAME_ENC="Enc";
     String my_key="jdwztahttruvphdm";
+    String my_key1,my_key2;
     String my_spec_key="risxjdoxqfhatuph";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +110,7 @@ public class ImageEncrypt extends AppCompatActivity {
 
                 try {
                     image1.setVisibility(View.VISIBLE);
-                    Encryptor.encryptToFile(my_key,my_spec_key,is,new FileOutputStream(outputFileEnc));
+                    Encryptor.encryptToFile(my_key1,my_spec_key,is,new FileOutputStream(outputFileEnc));
                     Toast.makeText(ImageEncrypt.this,"Ecrypted!!",Toast.LENGTH_SHORT).show();
                     encDir=null;
                     btn_dec.setEnabled(true);
@@ -139,7 +140,7 @@ public class ImageEncrypt extends AppCompatActivity {
                 if(encInputStream!=null && decDir!=null){
                 try{
                     File outputFileDec = new File(decDir,FILE_NAME_DEC);
-                    Encryptor.decryptToFile(my_key,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
+                    Encryptor.decryptToFile(my_key2,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
                     image1.setVisibility(View.INVISIBLE);
                     imageView.setImageURI(Uri.fromFile(outputFileDec));
                     Toast.makeText(ImageEncrypt.this, "Decrypted", Toast.LENGTH_SHORT).show();
@@ -242,7 +243,12 @@ public class ImageEncrypt extends AppCompatActivity {
             public void onClick(View v) {
                 if(encDir!=null && bitmap!=null){
                     FILE_NAME_ENC=txt_file_name.getText().toString()+"Enc";
-                    enc_dialog.dismiss();
+                    if(txt_password.getText().toString().length()==16){
+                        my_key1=txt_password.getText().toString();
+                        enc_dialog.dismiss();}
+                    else{
+                        Toast.makeText(ImageEncrypt.this,"Password Should Have 16 Char",Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else{
                     Toast.makeText(ImageEncrypt.this,"Fill all the fields",Toast.LENGTH_SHORT).show();
@@ -286,7 +292,12 @@ public class ImageEncrypt extends AppCompatActivity {
             public void onClick(View v) {
                 if(encInputStream!=null && decDir!=null){
                     FILE_NAME_DEC=txt_file_name.getText().toString()+".png";
-                    dec_dialog.dismiss();
+                    if(txt_password.getText().toString().length()==16){
+                        my_key2=txt_password.getText().toString();
+                        dec_dialog.dismiss();
+                    }else{
+                        Toast.makeText(ImageEncrypt.this,"Password Should Have 16 Characters",Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else{
                     Toast.makeText(ImageEncrypt.this,"Fill all the fields",Toast.LENGTH_SHORT).show();

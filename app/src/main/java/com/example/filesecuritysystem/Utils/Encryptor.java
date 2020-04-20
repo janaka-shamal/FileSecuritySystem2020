@@ -15,7 +15,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class Encryptor {
     private final static int READ_WRITE_BLOCK_BUFFER=1024;
-    private final static String ALGO_IMAGE_ENCRYPTER="AES/CBC/PKCS5Padding";
+    private final static String ALGO_ENCRYPTER="AES/CBC/PKCS5Padding";
     private final static String ALGO_SECRET_KEY="AES";
 
     public static void encryptToFile(String keyStr, String specStr, InputStream in, OutputStream out)
@@ -24,7 +24,7 @@ public class Encryptor {
         try{
             IvParameterSpec iv=new IvParameterSpec(specStr.getBytes("UTF-8"));
             SecretKeySpec keySpec=new SecretKeySpec(keyStr.getBytes("UTF-8"),ALGO_SECRET_KEY);
-            Cipher c=Cipher.getInstance(ALGO_IMAGE_ENCRYPTER);
+            Cipher c=Cipher.getInstance(ALGO_ENCRYPTER);
             c.init(Cipher.ENCRYPT_MODE,keySpec,iv);
             out=new CipherOutputStream(out,c);
             int count=0;
@@ -44,7 +44,7 @@ public class Encryptor {
         try{
             IvParameterSpec iv=new IvParameterSpec(specStr.getBytes("UTF-8"));
             SecretKeySpec keySpec=new SecretKeySpec(keyStr.getBytes("UTF-8"),ALGO_SECRET_KEY);
-            Cipher c=Cipher.getInstance(ALGO_IMAGE_ENCRYPTER);
+            Cipher c=Cipher.getInstance(ALGO_ENCRYPTER);
             c.init(Cipher.DECRYPT_MODE,keySpec,iv);
             out=new CipherOutputStream(out,c);
             int count=0;

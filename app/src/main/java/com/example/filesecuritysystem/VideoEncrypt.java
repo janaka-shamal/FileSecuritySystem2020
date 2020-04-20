@@ -64,7 +64,8 @@ public class VideoEncrypt extends AppCompatActivity {
     String decLocation;
     private String FILE_NAME_ENC="Enc";
     String my_key="jdwztahttruvphdm";
-    String my_spec_key="risxjdoxqfhatuph";
+    String my_key1,my_key2;
+    String my_spec_key="jdwztahttruvphdm";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,7 +109,7 @@ public class VideoEncrypt extends AppCompatActivity {
                 if(inputStream!=null&&encDir!=null){
                 try {
                     File outputFileEnc=new File(encDir,FILE_NAME_ENC);
-                    Encryptor.encryptToFile(my_key,my_spec_key,is,new FileOutputStream(outputFileEnc));
+                    Encryptor.encryptToFile(my_key1,my_spec_key,is,new FileOutputStream(outputFileEnc));
                     video1.setVisibility(View.VISIBLE);
                     videoPlayer.setVisibility(View.INVISIBLE);
                     Toast.makeText(VideoEncrypt.this,"Ecrypted!!",Toast.LENGTH_SHORT).show();
@@ -153,7 +154,7 @@ public class VideoEncrypt extends AppCompatActivity {
                 if(encInputStream!=null&&decDir!=null){
                 try{
                     outputFileDec = new File(decDir,FILE_NAME_DEC);
-                    Encryptor.decryptToFile(my_key,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
+                    Encryptor.decryptToFile(my_key2,my_spec_key,encInputStream,new FileOutputStream(outputFileDec));
                     video1.setVisibility(View.INVISIBLE);
                     videoPlayer.setVisibility(View.VISIBLE);
                     Uri uri=Uri.parse(decLocation+File.separator+FILE_NAME_DEC);
@@ -161,9 +162,6 @@ public class VideoEncrypt extends AppCompatActivity {
                     videoView.setMediaController(mediaController);
                     mediaController.setAnchorView(videoView);
                     Toast.makeText(VideoEncrypt.this, decLocation+File.separator+FILE_NAME_DEC, Toast.LENGTH_SHORT).show();
-                    if(delete_box.isChecked()){
-
-                    }
                     btn_enc.setEnabled(true);
                     encInputStream=null;
                     decDir=null;
@@ -253,7 +251,12 @@ public class VideoEncrypt extends AppCompatActivity {
             public void onClick(View v) {
                 if(encDir!=null && inputStream!=null){
                     FILE_NAME_ENC=txt_file_name.getText().toString()+"Enc";
-                    enc_dialog.dismiss();
+                    if(txt_password.getText().toString().length()==16){
+                        my_key1=txt_password.getText().toString();
+                        enc_dialog.dismiss();}
+                    else{
+                        Toast.makeText(VideoEncrypt.this,"Password Should Have 16 Characters",Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else{
                     Toast.makeText(VideoEncrypt.this,"Fill all the fields",Toast.LENGTH_SHORT).show();
@@ -297,7 +300,12 @@ public class VideoEncrypt extends AppCompatActivity {
             public void onClick(View v) {
                 if(encInputStream!=null && decDir!=null){
                     FILE_NAME_DEC=txt_file_name.getText().toString()+".mp4";
-                    dec_dialog.dismiss();
+                    if(txt_password.getText().toString().length()==16){
+                        my_key2=txt_password.getText().toString();
+                        dec_dialog.dismiss();}
+                    else{
+                        Toast.makeText(VideoEncrypt.this,"Password Should Have 16 Characters",Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else{
                     Toast.makeText(VideoEncrypt.this,"Fill all the fields",Toast.LENGTH_SHORT).show();
