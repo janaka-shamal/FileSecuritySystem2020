@@ -61,7 +61,6 @@ public class ImageEncrypt extends AppCompatActivity {
     File encDir,decDir;
     Dialog enc_dialog,dec_dialog;
     private String FILE_NAME_ENC="Enc";
-    String my_key="jdwztahttruvphdm";
     String my_key1,my_key2;
     String my_spec_key="risxjdoxqfhatuph";
     @Override
@@ -72,6 +71,7 @@ public class ImageEncrypt extends AppCompatActivity {
         btn_dec=(Button)findViewById(R.id.btn_decrypt);
         imageView = (ImageView)findViewById(R.id.imageView);
         image1 = (ImageView)findViewById(R.id.image1);
+
         //dialog box initiate
         enc_dialog=new Dialog(this);
         dec_dialog=new Dialog(this);
@@ -202,7 +202,6 @@ public class ImageEncrypt extends AppCompatActivity {
 
     //get Directory of the saving place
     public void ShowDirectoryPicker(final String type){
-        // Initialize dialog
         final StorageChooser chooser = new StorageChooser.Builder()
                 .withActivity(ImageEncrypt.this)
                 .withFragmentManager(getFragmentManager())
@@ -210,7 +209,6 @@ public class ImageEncrypt extends AppCompatActivity {
                 .allowCustomPath(true)
                 .setType(StorageChooser.DIRECTORY_CHOOSER)
                 .build();
-        //Retrieve the selected path by the user and show in a toast !
         chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
             @Override
             public void onSelect(String path) {
@@ -223,7 +221,6 @@ public class ImageEncrypt extends AppCompatActivity {
                 Toast.makeText(ImageEncrypt.this, "The selected path is : " + path, Toast.LENGTH_SHORT).show();
             }
         });
-        //Display File Picker !
         chooser.show();
     }
 
@@ -302,7 +299,7 @@ public class ImageEncrypt extends AppCompatActivity {
                         my_key2=txt_password.getText().toString();
                         dec_dialog.dismiss();
                     }else{
-                        Toast.makeText(ImageEncrypt.this,"Password Should Have 16 Characters",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ImageEncrypt.this,"Password Have 16 Characters",Toast.LENGTH_SHORT).show();
                     }
                 }
                 else{

@@ -46,7 +46,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.xml.transform.Source;
 
 public class AudioEncrypt extends AppCompatActivity {
-    private String FILE_NAME_DEC ="DecryptedAudio.mp3";
+
+
     //Music Player attributes
     Button playBtn,btn_finish;
     SeekBar positionBar,volumeBar;
@@ -60,30 +61,33 @@ public class AudioEncrypt extends AppCompatActivity {
     Button btn_ok,btn_pick_file,btn_location;
     TextView txt_file,txt_location;
     EditText txt_file_name,txt_password,txt_passwordConfirm;
-    CheckBox delete_box,deleteSource;
+    CheckBox delete_box;
     Dialog enc_dialog,dec_dialog;
     ConstraintLayout audio_player;
 
+    //encryption/decryption attributes
     Button btn_enc,btn_dec;
     ImageView audio1;
     InputStream inputStream,encInputStream;
     File outputFileDec;
     File encDir,decDir;
     private String FILE_NAME_ENC="Enc";
-    String my_key="jdwztahttruvphdm";
+    private String FILE_NAME_DEC ="DecryptedAudio.mp3";
     String my_key1,my_key2;
     String my_spec_key="risxjdoxqfhatuph";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_encrypt);
+
+        //enc/dec initiate
         btn_enc=(Button)findViewById(R.id.btn_encrypt);
         btn_dec=(Button)findViewById(R.id.btn_decrypt);
         audio1=(ImageView) findViewById(R.id.audio1);
         //dialog box initiate
         enc_dialog=new Dialog(this);
         dec_dialog=new Dialog(this);
-
         //music player initiate
         playBtn=(Button)findViewById(R.id.playBtn);
         elapsedTimeLabel=(TextView)findViewById(R.id.elapsedTimeLabel);
@@ -97,6 +101,7 @@ public class AudioEncrypt extends AppCompatActivity {
         player.seekTo(0);
         player.setLooping(true);
         volumeBar=(SeekBar)findViewById(R.id.volumeBar);
+        //volume bar music player
         volumeBar.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
                     @Override
@@ -119,7 +124,7 @@ public class AudioEncrypt extends AppCompatActivity {
                     }
                 }
         );
-
+        //position bar music player
         positionBar=(SeekBar)findViewById(R.id.positionBar);
         positionBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -141,7 +146,7 @@ public class AudioEncrypt extends AppCompatActivity {
             }
         });
 
-
+        //permission to access storage
         Dexter.withActivity(this)
                 .withPermissions(new String[]{
                         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -196,6 +201,7 @@ public class AudioEncrypt extends AppCompatActivity {
             }
         });
 
+        //deletion of decrypted file
         btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -208,12 +214,11 @@ public class AudioEncrypt extends AppCompatActivity {
                 }
             }
         });
+
         //decryption
         btn_dec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //File encFile=new File(myDir,FILE_NAME_ENC);
                 if(encInputStream!=null && decDir!=null){
                 try{
                     audio1.setVisibility(View.INVISIBLE);
@@ -260,7 +265,6 @@ public class AudioEncrypt extends AppCompatActivity {
         });
 
         //Thread update postion
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -303,7 +307,6 @@ public class AudioEncrypt extends AppCompatActivity {
     }
     //get Directory of the saving place
     public void ShowDirectoryPicker(final String type){
-        // Initialize dialog
         final StorageChooser chooser = new StorageChooser.Builder()
                 .withActivity(AudioEncrypt.this)
                 .withFragmentManager(getFragmentManager())
@@ -311,7 +314,6 @@ public class AudioEncrypt extends AppCompatActivity {
                 .allowCustomPath(true)
                 .setType(StorageChooser.DIRECTORY_CHOOSER)
                 .build();
-        // Retrieve the selected path by the user and show in a toast !
         chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
             @Override
             public void onSelect(String path) {
@@ -325,7 +327,6 @@ public class AudioEncrypt extends AppCompatActivity {
                 Toast.makeText(AudioEncrypt.this, "The selected path is : " + path, Toast.LENGTH_SHORT).show();
             }
         });
-        // Display File Picker !
         chooser.show();
     }
 
@@ -403,7 +404,7 @@ public class AudioEncrypt extends AppCompatActivity {
                         my_key2=txt_password.getText().toString();
                         dec_dialog.dismiss();
                     }else{
-                        Toast.makeText(AudioEncrypt.this,"Fill all the fields",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AudioEncrypt.this,"Password Have 16 Characters",Toast.LENGTH_SHORT).show();
                     }
                 }
                 else{

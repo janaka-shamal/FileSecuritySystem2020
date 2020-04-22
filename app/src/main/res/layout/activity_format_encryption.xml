@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".FormatEncryption">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/back"
+        app:layout_constraintBottom_toTopOf="@+id/layout_group"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </ImageView>
+
     <LinearLayout
         android:id="@+id/layout_group"
         android:layout_width="match_parent"
