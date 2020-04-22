@@ -40,7 +40,6 @@ import javax.crypto.NoSuchPaddingException;
 import ir.mahdi.mzip.zip.ZipArchive;
 
 public class FolderEncrypt extends AppCompatActivity {
-    private String FILE_NAME_DEC ="DecryptedVideo.mp4" ;
     //diaolog box attributes
     Button btn_ok,btn_pick_file,btn_location;
     TextView txt_file,txt_location;
@@ -48,12 +47,14 @@ public class FolderEncrypt extends AppCompatActivity {
     CheckBox delete_box;
     Dialog enc_dialog,dec_dialog;
 
+    //encryption/ decryption attributes
     Button btn_enc,btn_dec;
     File fileZip;
     ZipArchive zipArchive = new ZipArchive();
     InputStream inputStream,encInputStream;
     File encDir,decDir;
     String encDirectory,decDirectory;
+    private String FILE_NAME_DEC ="DecryptedFile.zip";
     private String FILE_NAME_ENC="Enc";
     String my_key="jdwztahttruvphdm";
     String my_spec_key="risxjdoxqfhatuph";
@@ -67,6 +68,7 @@ public class FolderEncrypt extends AppCompatActivity {
         //dialog box initiate
         enc_dialog=new Dialog(this);
         dec_dialog=new Dialog(this);
+        //permission to access external storage
         Dexter.withActivity(this)
                 .withPermissions(new String[]{
                         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -121,7 +123,6 @@ public class FolderEncrypt extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                //File encFile=new File(myDir,FILE_NAME_ENC);
                 if(encInputStream!=null&&decDir!=null){
                     try{
                         File outputFileDec = new File(decDir,FILE_NAME_DEC);
@@ -167,7 +168,6 @@ public class FolderEncrypt extends AppCompatActivity {
     }
     //get Directory of the saving place
     public void ShowDirectoryPicker(final String type){
-        // Initialize dialog
         final StorageChooser chooser = new StorageChooser.Builder()
                 .withActivity(FolderEncrypt.this)
                 .withFragmentManager(getFragmentManager())
@@ -175,7 +175,6 @@ public class FolderEncrypt extends AppCompatActivity {
                 .allowCustomPath(true)
                 .setType(StorageChooser.DIRECTORY_CHOOSER)
                 .build();
-        // Retrieve the selected path by the user and show in a toast !
         chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
             @Override
             public void onSelect(String path) {
@@ -195,7 +194,6 @@ public class FolderEncrypt extends AppCompatActivity {
                 }
             }
         });
-        // Display File Picker !
         chooser.show();
     }
 

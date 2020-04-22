@@ -57,7 +57,6 @@ public class FormatEncryption extends AppCompatActivity {
     File encDir,decDir;
     Dialog enc_dialog,dec_dialog;
     private String FILE_NAME_ENC="Enc";
-    String my_key="jdwztahttruvphdm";
     String my_key1,my_key2;
     String my_spec_key="risxjdoxqfhatuph";
     @Override
