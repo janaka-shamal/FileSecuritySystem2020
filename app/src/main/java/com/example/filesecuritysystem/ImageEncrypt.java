@@ -49,7 +49,7 @@ public class ImageEncrypt extends AppCompatActivity {
     //diaolog box attributes
     Button btn_ok,btn_pick_file,btn_location;
     TextView txt_file,txt_location;
-    EditText txt_file_name,txt_password;
+    EditText txt_file_name,txt_password,txt_passwordConfirm;
     CheckBox delete_box;
 
     //imageencryptor attribute
@@ -238,14 +238,20 @@ public class ImageEncrypt extends AppCompatActivity {
         txt_location=(TextView)enc_dialog.findViewById(R.id.txt_location);
         txt_file_name=(EditText)enc_dialog.findViewById(R.id.txt_file_name);
         txt_password=(EditText)enc_dialog.findViewById(R.id.txt_password);
+        txt_passwordConfirm=(EditText)enc_dialog.findViewById(R.id.txt_passwordConfirm);
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(encDir!=null && bitmap!=null){
                     FILE_NAME_ENC=txt_file_name.getText().toString()+"Enc";
                     if(txt_password.getText().toString().length()==16){
+                        if(txt_password.getText().toString().equals(txt_passwordConfirm.getText().toString())){
                         my_key1=txt_password.getText().toString();
-                        enc_dialog.dismiss();}
+                        enc_dialog.dismiss();}else{
+                            Toast.makeText(ImageEncrypt.this,"Confirmation Password Didnt Match",Toast.LENGTH_SHORT).show();
+                        }
+
+                        }
                     else{
                         Toast.makeText(ImageEncrypt.this,"Password Should Have 16 Char",Toast.LENGTH_SHORT).show();
                     }

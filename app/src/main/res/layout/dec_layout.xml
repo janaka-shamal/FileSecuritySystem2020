@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="300dp"
-    android:layout_height="500dp"
+    android:layout_height="600dp"
     android:layout_gravity="center"
     >
 
@@ -94,34 +94,52 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_file_name"
         app:layout_constraintVertical_bias="0.111" />
 
+    <EditText
+        android:id="@+id/txt_extension"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/input_field"
+        android:ems="10"
+        android:fontFamily="@font/thin"
+        android:visibility="invisible"
+        android:hint="Type (mp3,mp4 etc)"
+        android:inputType="text"
+        android:maxLength="16"
+        app:layout_constraintBottom_toTopOf="@+id/delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_password"
+        app:layout_constraintVertical_bias="0.456" />
+
     <Button
         android:id="@+id/btn_ok"
         android:layout_width="64dp"
         android:layout_height="38dp"
         android:layout_marginTop="31dp"
+        android:background="@drawable/buttonshape"
         android:fontFamily="sans-serif-medium"
         android:text="OK"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.826"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_password"
-        app:layout_constraintVertical_bias="0.184"
-        android:background="@drawable/buttonshape"
-        android:textColor="@color/white"/>
+        app:layout_constraintVertical_bias="0.504" />
 
     <CheckBox
         android:id="@+id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="43dp"
+        android:background="@drawable/input_field"
         android:text="Delete After Decrypt"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btn_ok"
-        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintHorizontal_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_password"
-        app:layout_constraintVertical_bias="0.0"
-        android:background="@drawable/input_field"
-        />
+        app:layout_constraintVertical_bias="0.407" />
 </androidx.constraintlayout.widget.ConstraintLayout>

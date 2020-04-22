@@ -19,6 +19,7 @@ public class Home extends AppCompatActivity {
         final Button audio=(Button)findViewById(R.id.audio);
         final Button folder=(Button)findViewById(R.id.folder);
         final Button txt=(Button)findViewById(R.id.txt);
+        final Button any=(Button)findViewById(R.id.any);
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,6 +56,14 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent n = new Intent(Home.this,TextEncyrpt.class);
+                startActivity(n);
+
+            }
+        });
+        any.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent n = new Intent(Home.this,FormatEncryption.class);
                 startActivity(n);
 
             }

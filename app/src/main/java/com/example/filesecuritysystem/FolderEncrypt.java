@@ -44,7 +44,7 @@ public class FolderEncrypt extends AppCompatActivity {
     //diaolog box attributes
     Button btn_ok,btn_pick_file,btn_location;
     TextView txt_file,txt_location;
-    EditText txt_file_name,txt_password;
+    EditText txt_file_name,txt_password,txt_passwordConfirm;
     CheckBox delete_box;
     Dialog enc_dialog,dec_dialog;
 
@@ -212,10 +212,12 @@ public class FolderEncrypt extends AppCompatActivity {
         txt_location.setText("Select Location to Save");
         txt_file_name=(EditText)enc_dialog.findViewById(R.id.txt_file_name);
         txt_password=(EditText)enc_dialog.findViewById(R.id.txt_password);
+        txt_passwordConfirm=(EditText)enc_dialog.findViewById(R.id.txt_passwordConfirm);
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(encDirectory!=""){
+                    if(txt_password.getText().toString().equals(txt_passwordConfirm.getText().toString())){
                     FILE_NAME_ENC=txt_file_name.getText().toString()+"Enc";
                     zipArchive.zip(encDirectory,encDirectory+"/file.zip","");
                     fileZip = new File(encDirectory+"/file.zip");
@@ -226,6 +228,9 @@ public class FolderEncrypt extends AppCompatActivity {
                     }
                     Toast.makeText(FolderEncrypt.this, encDirectory+" Converted to Zip and Select", Toast.LENGTH_SHORT).show();
                     enc_dialog.dismiss();
+                    }else{
+                        Toast.makeText(FolderEncrypt.this, encDirectory+" Confirmation Password Didnt Match", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else{
                     Toast.makeText(FolderEncrypt.this,"Fill all the fields",Toast.LENGTH_SHORT).show();

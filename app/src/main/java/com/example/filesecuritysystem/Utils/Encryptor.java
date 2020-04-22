@@ -12,7 +12,8 @@ import javax.crypto.CipherOutputStream;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
+//this is encrpytin class
+//i get bytestream of file an convert them to small bit
 public class Encryptor {
     private final static int READ_WRITE_BLOCK_BUFFER=1024;
     private final static String ALGO_ENCRYPTER="AES/CBC/PKCS5Padding";

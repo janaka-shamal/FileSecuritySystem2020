@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="300dp"
-    android:layout_height="500dp"
+    android:layout_height="600dp"
     android:layout_gravity="center"
     >
 
@@ -96,20 +96,37 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_file_name"
         app:layout_constraintVertical_bias="0.111" />
 
+    <EditText
+        android:id="@+id/txt_passwordConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/input_field"
+        android:ems="10"
+        android:fontFamily="@font/thin"
+        android:hint="Confirm Password"
+        android:inputType="textPassword"
+        android:maxLength="16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_password"
+        app:layout_constraintVertical_bias="0.168" />
+
     <Button
         android:id="@+id/btn_ok"
         android:layout_width="65dp"
         android:layout_height="44dp"
         android:layout_marginTop="31dp"
-        android:text="OK"
+        android:background="@drawable/buttonshape"
         android:fontFamily="@font/regular"
+        android:text="OK"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.825"
+        app:layout_constraintHorizontal_bias="0.821"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_password"
-        app:layout_constraintVertical_bias="0.0"
-        android:background="@drawable/buttonshape"
-        android:textColor="@color/white"/>
+        app:layout_constraintVertical_bias="0.669" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

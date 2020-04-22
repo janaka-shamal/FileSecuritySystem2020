@@ -12,6 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".FormatEncryption"></activity>
         <activity android:name=".TextEncyrpt" />
         <activity android:name=".FolderEncrypt" />
         <activity android:name=".AudioEncrypt" />
