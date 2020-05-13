@@ -192,7 +192,7 @@ public class FormatEncryption extends AppCompatActivity {
                 File pickFile=new File(path);
                 try {
                     inputStream=new FileInputStream(pickFile);
-                    txt_location.setText(path);
+                    txt_file.setText(path);
                     Toast.makeText(FormatEncryption.this, "Your file is : " + path, Toast.LENGTH_SHORT).show();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
